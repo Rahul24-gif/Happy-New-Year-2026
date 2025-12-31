@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy New Year 2026 | Sneha Tr</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Great+Vibes&family=Rozha+One&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,400;1,700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --gold-base: #b8860b;
+            --gold-highlight: #fff5c3;
+        }
+
+        body {
+            margin: 0; padding: 0; overflow: hidden;
+            background-color: #000;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            height: 100vh; width: 100vw;
+            touch-action: none;
+            perspective: 1200px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* --- 1. NEBULA BACKGROUND --- */
+        #nebula-container {
+            position: fixed; top: -10%; left: -10%; width: 120%; height: 120%;
+            z-index: 0; pointer-events: none; will-change: transform;
+        }
+        .nebula-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover; opacity: 0.4; mix-blend-mode: screen;
+        }
+        .nebula-1 { background: radial-gradient(circle at 30% 40%, #1a0b14 0%, transparent 60%); }
+        .nebula-2 { background: radial-gradient(circle at 70% 60%, #0d041aa8 0%, transparent 50%); }
+
+        #renderCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2;
+        }
+
+        /* --- 2. GATES --- */
+        .gate-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 100; pointer-events: none; display: flex; transform-style: preserve-3d;
+        }
+
+        .gate-panel {
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, #1a0f0a, #2d1b12);
+            position: relative; box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+            will-change: transform;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='100' fill='none' stroke='%23333' stroke-width='0.5' stroke-opacity='0.2'/%3E%3C/svg%3E");
+        }
+
+        .gate-engraving {
+            position: absolute; inset: 0; opacity: 0.3;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='30' stroke='%23d4af37' stroke-width='0.5' fill='none' opacity='0.1'/%3E%3C/svg%3E");
+        }
+
+        .gate-open-left { transform: translate3d(-100%, 0, 0) rotateY(15deg); transition: transform 4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        .gate-open-right { transform: translate3d(100%, 0, 0) rotateY(-15deg); transition: transform 4s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        /* --- 3. 3D GOLD TEXT --- */
+        #main-stage { perspective: 800px; transform-style: preserve-3d; }
+
+        .text-royal {
+            font-family: 'Cinzel', serif; font-weight: 900;
+            background: linear-gradient(110deg, #b8860b 30%, #fff5c3 45%, #fff 50%, #fff5c3 55%, #b8860b 70%);
+            background-size: 250% 100%; -webkit-background-clip: text; color: transparent;
+            animation: goldSheen 6s linear infinite, float3D 8s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.4));
+            opacity: 0; 
+            transform: translate3d(0, 0, -800px) rotateX(30deg);
+            transition: opacity 1.5s ease-out, transform 2.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .text-royal.visible { opacity: 1; transform: translate3d(0, 0, 0) rotateX(0deg); }
+
+        @keyframes goldSheen { 0% { background-position: 100% 0; } 100% { background-position: 0% 0; } }
+        @keyframes float3D { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(0, -10px, 0); } }
+
+        /* --- 4. SMOOTH WISHES --- */
+        #content-layer {
+            position: fixed; inset: 0; z-index: 10;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            pointer-events: none;
+        }
+
+        .story-slide {
+            position: absolute;
+            width: 100%; text-align: center;
+            top: 50%; left: 50%; 
+            transform: translate3d(-50%, -50%, 0) translate3d(0, 30px, 0) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1.5s ease-out, transform 1.5s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: opacity, transform;
+        }
+
+        .story-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem; line-height: 1.4; color: #ffffff;
+            text-shadow: 0 4px 15px rgba(0,0,0,1);
+            max-width: 90%; margin: 0 auto;
+        }
+        
+        .story-slide.active { opacity: 1; transform: translate3d(-50%, -50%, 0) translate3d(0, 0, 0) scale(1); }
+        .story-slide.exit { opacity: 0; transform: translate3d(-50%, -50%, 0) translate3d(0, -30px, 0) scale(1.05); }
+
+        .name-royal { font-family: 'Rozha One', serif; color: #ffd700; text-shadow: 0 0 30px rgba(255, 215, 0, 0.6); display: block; margin-top: 10px; font-size: 3.5rem; }
+        .script-royal { font-family: 'Great Vibes', cursive; color: #f7e7ce; font-size: 3rem; display: block; margin-top: 5px; text-shadow: 0 0 15px rgba(247, 231, 206, 0.5); }
+        .gold-bold { color: #ffd700; font-weight: 700; font-family: 'Cinzel', serif; }
+
+        /* --- 5. INTERFACE --- */
+        #gate-interface {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 200; text-align: center; transition: opacity 0.8s;
+        }
+        #royal-lock {
+            width: 100px; height: 100px; margin: 0 auto;
+            background: radial-gradient(circle at 30% 30%, #fff0a4, #d4af37, #8a6e2f);
+            border-radius: 50%; display: grid; place-items: center;
+            cursor: pointer; box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3), 0 0 40px rgba(212, 175, 55, 0.6);
+            animation: lockPulse 2s infinite; pointer-events: auto;
+        }
+        @keyframes lockPulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); } 100% { transform: scale(1); } }
+
+        #light-burst { position: fixed; inset: 0; background: white; z-index: 150; opacity: 0; pointer-events: none; transition: opacity 1s ease-out; }
+        #blackout { position: fixed; inset: 0; background: black; z-index: 105; opacity: 0; pointer-events: none; transition: opacity 0.5s; }
+
+        /* Music */
+        #music-control { position: fixed; top: 20px; right: 20px; z-index: 300; opacity: 0; transition: opacity 1s; }
+        .magic-dust { position: fixed; width: 3px; height: 3px; background: #ffd700; border-radius: 50%; pointer-events: none; z-index: 999; animation: fadeDust 0.8s forwards; }
+        @keyframes fadeDust { to { opacity: 0; transform: translate3d(0, -15px, 0) scale(0); } }
+
+    </style>
+</head>
+<body>
+
+    <div id="nebula-container">
+        <div class="nebula-layer nebula-1"></div>
+        <div class="nebula-layer nebula-2"></div>
+    </div>
+
+    <canvas id="renderCanvas"></canvas>
+    <div id="light-burst"></div>
+    <div id="blackout"></div>
+
+    <!-- AUDIO PLAYER - Ensure file is in same folder -->
+    <audio id="bg-music" loop>
+        <source src="happy-new-year-music-457512.mp3" type="audio/mp3">
+    </audio>
+    
+    <div id="music-control">
+        <button id="mute-btn" class="text-white/50 hover:text-white border border-white/20 rounded-full p-2 backdrop-blur-md">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+        </button>
+    </div>
+
+    <div class="gate-container">
+        <div id="gate-left" class="gate-panel gate-left border-r border-black/50">
+            <div class="gate-engraving"></div>
+            <div class="absolute top-1/2 right-10 w-3 h-32 bg-gradient-to-b from-yellow-700 to-yellow-900 rounded-full shadow-2xl transform -translate-y-1/2 flex flex-col justify-between py-2 items-center">
+                <div class="w-4 h-4 rounded-full bg-yellow-500 shadow-md"></div>
+                <div class="w-4 h-4 rounded-full bg-yellow-500 shadow-md"></div>
+            </div>
+        </div>
+        <div id="gate-right" class="gate-panel gate-right border-l border-black/50">
+            <div class="gate-engraving"></div>
+            <div class="absolute top-1/2 left-10 w-3 h-32 bg-gradient-to-b from-yellow-700 to-yellow-900 rounded-full shadow-2xl transform -translate-y-1/2 flex flex-col justify-between py-2 items-center">
+                <div class="w-4 h-4 rounded-full bg-yellow-500 shadow-md"></div>
+                <div class="w-4 h-4 rounded-full bg-yellow-500 shadow-md"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gate-interface">
+        <div id="royal-lock">
+            <svg class="w-12 h-12 text-yellow-900 drop-shadow-lg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 17a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm6-9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 10 0v2h1zM8 6a4 4 0 0 1 8 0v2H8V6z"/></svg>
+        </div>
+        <p class="mt-8 text-yellow-300/80 text-xs tracking-[0.5em] uppercase font-cinzel">Tap to Unlock 2026</p>
+    </div>
+
+    <div id="content-layer">
+        <div id="main-stage">
+            <div id="year-container" class="text-royal text-7xl sm:text-8xl md:text-9xl text-center">2026</div>
+        </div>
+        
+        <!-- Story Container for Wishes -->
+        <div id="story-container" class="relative w-full h-full pointer-events-none"></div>
+    </div>
+
+    <div id="sender-area" class="fixed bottom-10 z-50 opacity-0 transition-all duration-1000 transform translate-y-10 w-full text-center">
+        <div class="inline-block px-8 py-3 rounded-full bg-black/60 border border-yellow-500/30 backdrop-blur-xl shadow-2xl">
+            <p class="text-yellow-100/90 text-xs tracking-widest uppercase font-montserrat font-semibold">
+                Specially Wished by <span class="text-yellow-400 font-bold ml-1 text-sm">Khadus Sir 😅😜</span>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. SETUP ---
+        const canvas = document.getElementById('renderCanvas');
+        const ctx = canvas.getContext('2d');
+        let w, h;
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.addEventListener('resize', resize); resize();
+        const random = (min, max) => Math.random() * (max - min) + min;
+
+        // --- 2. PARTICLES ---
+        class Particle {
+            constructor(type, x, y, hue) { this.init(type, x, y, hue); }
+            init(type, x, y, hue) {
+                this.type = type; this.dead = false;
+                if (type === 'DUST') { 
+                    this.x = x; this.y = y; this.vx = random(-2, 2); this.vy = random(-1, 1);
+                    this.size = random(1, 3); this.life = 1; this.decay = 0.02;
+                } else if (type === 'FEATHER') {
+                    this.x = random(0, w); this.y = random(-h, 0); this.speed = random(0.5, 1.5);
+                    this.angle = random(0, 6); this.sway = random(0.5, 2); this.size = random(3, 6);
+                } else if (type === 'CONFETTI') {
+                    this.x = random(0, w); this.y = random(-h, 0); this.speed = random(2, 5);
+                    this.color = ['#ffd700', '#f7e7ce', '#4a0e4e'][Math.floor(random(0,3))];
+                    this.rotation = random(0, 360); this.size = random(5, 8);
+                } else if (type === 'ROCKET') {
+                    this.x = random(w*0.2, w*0.8); this.y = h; this.targetY = random(h*0.1, h*0.4);
+                    this.speed = random(12, 16); this.hue = hue || random(0, 360); this.trail = [];
+                } else if (type === 'SPARK') {
+                    this.x = x; this.y = y;
+                    const a = random(0, Math.PI*2); const v = random(2, 8);
+                    this.vx = Math.cos(a)*v; this.vy = Math.sin(a)*v;
+                    this.hue = hue; this.life = 1; this.decay = random(0.015, 0.03); this.gravity = 0.1;
+                } else if (type === 'STAR') {
+                    this.x = random(0, w); this.y = random(0, h); this.z = random(0.5, 2); this.size = random(0.5, 1.5);
+                }
+            }
+            update(warpSpeed) {
+                if (this.type === 'DUST') { this.x += this.vx; this.y += this.vy; this.life -= this.decay; if(this.life <= 0) this.dead = true; }
+                else if (this.type === 'FEATHER') { this.y += this.speed; this.x += Math.sin(this.angle) * this.sway; this.angle += 0.02; if(this.y > h) this.y = -10; }
+                else if (this.type === 'CONFETTI') { this.y += this.speed; this.rotation += 2; if(this.y > h) this.y = -10; }
+                else if (this.type === 'STAR') { this.y += (0.2 * warpSpeed) * this.z; if(warpSpeed > 1) { this.x += (this.x - w/2) * 0.03 * warpSpeed; this.y += (this.y - h/2) * 0.03 * warpSpeed; } if(this.y > h || this.x < 0 || this.x > w) { this.y = random(-50, 0); this.x = random(0, w); } }
+                else if (this.type === 'ROCKET') { this.y -= this.speed; this.speed *= 0.96; if(this.y <= this.targetY || this.speed < 1) { this.dead = true; for(let i=0; i<60; i++) particles.push(new Particle('SPARK', this.x, this.y, this.hue)); } }
+                else if (this.type === 'SPARK') { this.x += this.vx; this.y += this.vy; this.vy += this.gravity; this.vx *= 0.95; this.life -= this.decay; if(this.life <= 0) this.dead = true; }
+            }
+            draw() {
+                if (this.type === 'STAR') { ctx.fillStyle = `rgba(255,255,255,${random(0.3, 0.8)})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size * this.z, 0, Math.PI*2); ctx.fill(); }
+                else if (this.type === 'DUST') { ctx.fillStyle = `rgba(255, 215, 0, ${this.life})`; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
+                else if (this.type === 'FEATHER') { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle); ctx.fillStyle = 'rgba(255, 215, 0, 0.6)'; ctx.beginPath(); ctx.ellipse(0,0, this.size, this.size*3, 0, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
+                else if (this.type === 'CONFETTI') { ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI/180); ctx.fillStyle = this.color; ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size); ctx.restore(); }
+                else if (this.type === 'ROCKET') { ctx.fillStyle = `hsl(${this.hue}, 100%, 70%)`; ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill(); }
+                else if (this.type === 'SPARK') { ctx.globalCompositeOperation = 'lighter'; ctx.fillStyle = `hsla(${this.hue}, 100%, 60%, ${this.life})`; ctx.beginPath(); ctx.arc(this.x, this.y, 2, 0, Math.PI*2); ctx.fill(); ctx.globalCompositeOperation = 'source-over'; }
+            }
+        }
+
+        let particles = []; for(let i=0; i<100; i++) particles.push(new Particle('STAR'));
+        let warpSpeed = 1; let sceneMode = 'INTRO';
+        let featherCount = 0; 
+
+        function animate() {
+            ctx.clearRect(0,0,w,h);
+            if (sceneMode === 'WISHES') { if(featherCount < 30 && Math.random() < 0.05) { particles.push(new Particle('FEATHER')); featherCount++; } }
+            if (sceneMode === 'FINALE') { if(Math.random() < 0.1) particles.push(new Particle('CONFETTI')); if(Math.random() < 0.08) particles.push(new Particle('ROCKET', 0, 0, Math.random() > 0.5 ? 50 : 270)); }
+            for(let i=particles.length-1; i>=0; i--) { 
+                particles[i].update(warpSpeed); particles[i].draw(); 
+                if(particles[i].dead) { if(particles[i].type === 'FEATHER') featherCount--; particles.splice(i, 1); }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // --- 3. DOM & TEXT SYSTEM ---
+        const wishes = [
+            "Welcome to a year of <br><span class='script-royal'>New Beginnings</span>",
+            "Specially wishing <span class='name-royal'>Sneha Tr</span>",
+            "May your talent shine <br><span class='gold-bold text-4xl'>Brighter than Ever</span>",
+            "May every day bring a new <br><span class='script-royal'>Reason to Smile</span>",
+            "And may Success follow you <br>Everywhere you go.",
+            "You are truly special.",
+            "<span class='gold-bold text-5xl'>Happy New Year 2026!</span>"
+        ];
+        
+        const storyCont = document.getElementById('story-container');
+        let slides = []; 
+
+        wishes.forEach((wishHTML, i) => {
+            const slide = document.createElement('div');
+            slide.className = 'story-slide';
+            slide.innerHTML = `<div class='story-text'>${wishHTML}</div>`;
+            storyCont.appendChild(slide);
+            slides.push(slide);
+        });
+
+        let wishIndex = 0;
+
+        function playNextWish() {
+            if(wishIndex >= slides.length) { return; }
+            if(wishIndex > 0) { slides[wishIndex - 1].classList.remove('active'); slides[wishIndex - 1].classList.add('exit'); }
+            slides[wishIndex].classList.add('active');
+
+            const readTime = wishes[wishIndex].length > 40 ? 5000 : 3500;
+
+            if (wishIndex < slides.length - 1) {
+                setTimeout(playNextWish, readTime);
+            } else {
+                setTimeout(() => {
+                    sceneMode = 'FINALE'; 
+                    setTimeout(() => { 
+                        document.getElementById('sender-area').style.opacity = '1'; 
+                        document.getElementById('sender-area').style.transform = 'translateY(0)'; 
+                    }, 1000); 
+                }, readTime);
+            }
+            wishIndex++;
+        }
+
+        // --- 4. INTERACTION ---
+        const audio = document.getElementById('bg-music');
+        const muteBtn = document.getElementById('mute-btn');
+        muteBtn.addEventListener('click', () => { if(audio.paused) audio.play(); audio.muted = !audio.muted; muteBtn.style.opacity = audio.muted ? '0.5' : '1'; });
+        
+        // Debugging for User
+        audio.addEventListener('error', function(e) {
+            console.log("Audio file failed to load. Make sure file is in same folder.");
+            alert("Music File Nahi Mili!\nPlease make sure 'happy-new-year-music-457512.mp3' is in the same folder as this HTML file.");
+        }, true);
+
+        document.getElementById('royal-lock').addEventListener('click', () => {
+            audio.volume = 1.0; 
+            audio.play().catch(e => console.log("Click interaction success but file might be missing"));
+            document.getElementById('music-control').style.opacity = '1';
+            document.getElementById('gate-interface').style.opacity = '0';
+            document.getElementById('blackout').style.opacity = '1';
+
+            setTimeout(() => {
+                document.getElementById('blackout').style.opacity = '0';
+                document.getElementById('light-burst').style.opacity = '1'; setTimeout(() => document.getElementById('light-burst').style.opacity = '0', 1500);
+                document.getElementById('gate-left').classList.add('gate-open-left');
+                document.getElementById('gate-right').classList.add('gate-open-right');
+                
+                for(let i=0; i<50; i++) particles.push(new Particle('DUST', w/2, random(0, h)));
+                let iv = setInterval(() => { warpSpeed += 0.5; if(warpSpeed > 25) { clearInterval(iv); warpSpeed = 1; } }, 50);
+                sceneMode = 'OPENING';
+
+                setTimeout(() => { document.getElementById('year-container').classList.add('visible'); }, 1200);
+                setTimeout(() => { sceneMode = 'WISHES'; playNextWish(); }, 3500);
+
+            }, 800);
+        });
+
+    </script>
+</body>
+</html>
+
+
